@@ -103,3 +103,18 @@ make
 apt-get install -y screen zip nmon tcpdump inotify-tools ntpdate iperf
 go get github.com/uber/go-torch
 
+## Installing docker composer
+sudo curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+## Downloading fabric binaries
+curl -sSL http://bit.ly/2ysbOFE | bash -s 1.2.1
+echo "export PATH=export PATH=$HOME/fabric-samples/bin:$PATH" >> ~/.bashrc
+
+export FABRIC_START_TIMEOUT=10
+echo "Test of fabric will start in 10 seconds..."
+sleep ${FABRIC_START_TIMEOUT}
+
+cd ~/fabric-samples/first-nework/
+./byfn.sh generate
+./byfn.sh up
