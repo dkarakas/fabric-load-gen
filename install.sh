@@ -40,7 +40,7 @@ docker run hello-world
 # pip
 apt-get install -y python-pip
 # docker compose
-pip install -y docker-compose
+pip install docker-compose
 # git
 apt-get install -y git
 # git
@@ -49,6 +49,9 @@ apt-get install -y curl
 mkdir -p $GOPATH/src/github.com/hyperledger/
 cd $GOPATH/src/github.com/hyperledger/
 git clone https://github.com/thakkarparth007/fabric.git
+cd fabric
+go get -u github.com/golang/protobuf/protoc-gen-go
+cp $GOPATH/bin/protoc-gen-go build/docker/gotools/bin/
 git checkout experimental_modifications
 make
 echo "export PATH=$PATH:$GOPATH/src/github.com/hyperledger/fabric/build/bin/" >> ~/.bashrc
@@ -104,8 +107,8 @@ apt-get install -y screen zip nmon tcpdump inotify-tools ntpdate iperf
 go get github.com/uber/go-torch
 
 ## Installing docker composer
-sudo curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+#sudo curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+#sudo chmod +x /usr/local/bin/docker-compose
 
 ## Downloading fabric binaries
 curl -sSL http://bit.ly/2ysbOFE | bash -s 1.2.1
