@@ -54,6 +54,8 @@ go get -u github.com/golang/protobuf/protoc-gen-go
 cp $GOPATH/bin/protoc-gen-go build/docker/gotools/bin/
 git checkout experimental_modifications
 make
+cp $GOPATH/bin/protoc-gen-go build/docker/gotools/bin/
+make
 echo "export PATH=$PATH:$GOPATH/src/github.com/hyperledger/fabric/build/bin/" >> ~/.bashrc
 source ~/.bashrc
 
