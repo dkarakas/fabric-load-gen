@@ -1,3 +1,4 @@
+#!/bin/bash
 # Install fabric on all - using Parth's repo
 # install couchdb on all
 # install fetch-block on all
