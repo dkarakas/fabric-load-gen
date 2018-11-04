@@ -23,8 +23,8 @@ apt-get install -y htop
 ##
 
 # golang
-cd $HOME/ && wget https://storage.googleapis.com/golang/go1.7.1.linux-amd64.tar.gz
-tar -xvf go1.7.1.linux-amd64.tar.gz
+cd $HOME/ && wget https://dl.google.com/go/go1.11.2.linux-amd64.tar.gz
+tar -xvf go1.11.2.linux-amd64.tar.gz
 mkdir $HOME/gopath 
 echo "export GOPATH=$HOME/gopath" >> ~/.bashrc 
 echo "export GOROOT=$HOME/go" >> ~/.bashrc
@@ -34,17 +34,26 @@ source ~/.bashrc
 # libltdl
 apt-get install libltdl-dev
 # docker
-wget https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/amd64/docker-ce_17.06.0~ce-0~ubuntu_amd64.deb
-dpkg -i docker-ce_17.06.0~ce-0~ubuntu_amd64.deb
-docker run hello-world
+sudo apt-get update
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+sudo apt-get update
+sudo apt-get install docker-ce
+sudo docker run hello-world
+
 # pip
-apt-get install -y python-pip
-# docker compose
-pip install -y docker-compose
+apt-get install -y python3 python3-pip
+pip3 install docker-compose
 # git
-apt-get install -y git
-# git
-apt-get install -y curl
+apt-get install -y git curl
 # code
 mkdir -p $GOPATH/src/github.com/hyperledger/
 cd $GOPATH/src/github.com/hyperledger/
@@ -77,7 +86,7 @@ CORE_PEER_TLS_SERVERHOSTOVERRIDE=${peerName} \
 CORE_VM_DOCKER_ATTACHSTDOUT=true \
 CORE_PEER_MSPCONFIGPATH=/root/bcnetwork/conf/crypto-config/peerOrganizations/${orgName}/peers/${peerName}.${orgName}/msp \
 /root/gocode/src/github.com/hyperledger/fabric/build/bin/peer node start --peer-defaultchain=false
-' > ./start-peer.sh
+" > ./start-peer.sh
 chmod +x ./start-peer.sh
 
 # cd examples/e2e_cli/ && ./network_setup.sh up
@@ -102,10 +111,6 @@ make
 ## Install utilities
 apt-get install -y screen zip nmon tcpdump inotify-tools ntpdate iperf
 go get github.com/uber/go-torch
-
-## Installing docker composer
-sudo curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
 
 ## Downloading fabric binaries
 curl -sSL http://bit.ly/2ysbOFE | bash -s 1.2.1
