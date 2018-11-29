@@ -1,0 +1,69 @@
+Before describing all the steps and issues we faced, we want to
+make clear that we are not familiar with NodeJS and Go laguage.
+Therefore, some of the issues we faced might have been due to our
+unfamiliarity with the subject.
+The first paper that we have tried to reproduce was "Performance
+Benchmarking and Optimizing Hyperledger Fabric Blockchain Plat-
+form". We describe each step in the process of reproducing the
+experiement:
+(1) We have found their code which was published on public
+github repository. 4 The git repository contains a brief de-
+scription of the hierarchy of the files which we have found
+helpful to get aquinted with the code.
+(2) tried to use docker-compose split and start each seperately
+but for some reason it didn’t work.
+(3) Explain what is wrong with the documentation
+inquiring more details about the issue. However, once we
+(4) Unfortunately the documentation did not mention how to set
+up the environment. There was an install script in the root of
+the git repository which seemed to install all the necessary
+tools needed. However, when we ran their script the first is-
+sue that we run into was that the installation script was miss-
+scrip the following command: pipinstalldocker − compose.
+(5) That allowed us to continue the installation but the next
+issue we faced was an error:
+the fact that there were hard coded paths in the scripts of the load-
+"make: *** [/opt/gotools/obj/gopath/bin/golint] Error 2
+Makefile:52: recipe for target ’/opt/gotools/obj/gopath/bin/golint’
+failed
+Makefile:215: recipe for target ’build/docker/gotools’ failed"
+After investing significant amount of time we found that the
+directory was missing tool called protoc-gen-go. We were
+able to resolve the issue with the following commands:
+" go get -u github.com/golang/protobuf/protoc-gen-go
+cp $GOPATH/bin/protoc-gen-go build/docker/gotools/bin/"
+(6) After fixing that we ran into a problem with a bunch of bro-
+ken link which were giving as an "ERROR 404." We were able
+to identify that they were occurring in the Dockerfile.in. It
+turns out that they were using base files from hyperledger
+project but the authors were trying to run a curl command
+within that dockerfile and install in one of the examples
+kafka but the link was broken. Example of the command:
+"RUN curl -fsSL "http://www.apache.org/dist/zookeeper/zookeeper-
+3.4.9/zookeeper-3.4.9.tar.gz"
+We did not find any specific requirements for the zookeper
+version so that is why we fix the link with the most up to
+date version.
+(7) Unfortunately the next error we got was that goimports was
+missing within one of the Dockerfiles. Therefore we had to
+manually add a goimports using a RUN command within the
+container
+(8) The next error that we got was
+"The following files contain go import errors
+orderer/common/broadcast/broadcast.go orderer/main_test.go
+The goimports command must be run for these files." We
+have also spend significant amount of time trying to resolve
+this issue but we were not able to do so. We have investigated
+further into the Makefile and followed it line by line. After
+doing so we were able to identify that the issue was hap-
+pening in a file that exists in scripts/golinter.sh. Goimports
+is execute successfully against multiple directories includ-
+ing "bccsp" "common" "core," etc. It only fails against the
+orderer directory. The next step was to understand why it
+failed against that directory. We unable all possible pritable
+statements, and we found that for some reason goimports
+was not parsing correctly through all the directories. We
+spent significant amount online trying to figure out the is-
+sue but we were never able to understand why the problem
+accrued. Therefore, we concluded that this might be a bug in
+the goimports.
